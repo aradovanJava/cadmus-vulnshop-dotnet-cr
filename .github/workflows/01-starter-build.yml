@@ -1,0 +1,28 @@
+# =============================================================================
+#  STARTER pipeline - the state trainees inherit at Cyber Range level E1.
+#  It builds and tests. It performs no security checking whatsoever.
+#  Task: extend it into 02-secure-pipeline.yml.
+# =============================================================================
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # >>> VULN A03 : CWE-1357 : third-party action pinned to a mutable tag.
+      #     Whoever controls that tag controls this build. The tj-actions
+      #     compromise of March 2025 worked exactly this way.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      # >>> VULN A03 : no dependency audit, no lock file enforcement
+      - run: dotnet restore src/CadmusVulnApp/CadmusVulnApp.csproj
+      - run: dotnet build src/CadmusVulnApp/CadmusVulnApp.csproj -c Release --no-restore

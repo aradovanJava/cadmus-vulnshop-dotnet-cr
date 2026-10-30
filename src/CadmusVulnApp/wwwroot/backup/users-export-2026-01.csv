@@ -1,0 +1,4 @@
+# VULN A02 - reachable via directory browsing at /backup/
+Id,Username,PasswordHash,Role,Email,Iban
+1,admin,0192023a7bbd73250516f069df18b500,Administrator,admin@cadmus.local,HR1723600000000000000
+2,aradovan,2ac9cb7dc02b3c0083eb70898e549b63,Auditor,a.radovan@cadmus.local,HR1723600000011111111

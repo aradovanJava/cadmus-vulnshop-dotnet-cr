@@ -1,0 +1,18 @@
+# build output
+bin/
+obj/
+publish/
+*.user
+
+# SonarScanner for .NET working directory
+.sonarqube/
+
+# runtime state - recreated and seeded on first start
+*.db
+*.db-shm
+*.db-wal
+
+# editors
+.vs/
+.vscode/
+.idea/

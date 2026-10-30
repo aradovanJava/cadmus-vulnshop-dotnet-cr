@@ -1,0 +1,29 @@
+# TRAINING USE ONLY - binds to loopback so the vulnerable app is not routable.
+services:
+  vulnapp:
+    build: .
+    container_name: cadmus-cr13-vulnapp
+    ports:
+      - "127.0.0.1:5080:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+    networks: [range]
+
+  sonarqube:
+    image: sonarqube:community
+    container_name: cadmus-cr13-sonarqube
+    ports:
+      - "127.0.0.1:9000:9000"
+    networks: [range]
+
+  zap:
+    image: ghcr.io/zaproxy/zaproxy:stable
+    container_name: cadmus-cr13-zap
+    command: zap.sh -daemon -host 0.0.0.0 -port 8090 -config api.disablekey=true
+    ports:
+      - "127.0.0.1:8090:8090"
+    networks: [range]
+
+networks:
+  range:
+    driver: bridge

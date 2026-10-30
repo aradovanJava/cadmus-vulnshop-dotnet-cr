@@ -1,0 +1,10 @@
+# ZAP baseline rule tuning. Columns: ruleId	action	(optional) URL regex
+# WARN = report but do not fail; FAIL = fail the build; IGNORE = suppress.
+# Start permissive, then ratchet each WARN to FAIL as the finding is fixed.
+10038	FAIL	# Content Security Policy header not set
+10021	FAIL	# X-Content-Type-Options header missing
+10035	WARN	# Strict-Transport-Security header not set
+40012	FAIL	# Cross Site Scripting (reflected)
+40018	FAIL	# SQL Injection
+90022	WARN	# Application error disclosure
+10202	WARN	# Absence of anti-CSRF tokens
