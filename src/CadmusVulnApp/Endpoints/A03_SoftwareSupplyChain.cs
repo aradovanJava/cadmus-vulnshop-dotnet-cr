@@ -27,12 +27,6 @@ public static class A03_SoftwareSupplyChain
     {
         var g = app.MapGroup("/api/a03").WithTags("A03 Software Supply Chain");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A03 : CWE-1104 : use of an unmaintained third-party
-        //     component. Newtonsoft.Json 9.0.1 dates from 2016 and predates
-        //     every deserialisation hardening added since. It is still doing
-        //     load-bearing work in a request path.
-        // ------------------------------------------------------------------
         g.MapPost("/import", (HttpRequest req) =>
         {
             using var reader = new StreamReader(req.Body);
@@ -42,11 +36,6 @@ public static class A03_SoftwareSupplyChain
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A03 : CWE-494 : code downloaded and executed without an
-        //     integrity check. The "plugin catalogue" is fetched over plain
-        //     HTTP from a mutable URL with no signature and no checksum.
-        // ------------------------------------------------------------------
         g.MapGet("/plugins/refresh", async (IHttpClientFactory factory) =>
         {
             var http = factory.CreateClient();

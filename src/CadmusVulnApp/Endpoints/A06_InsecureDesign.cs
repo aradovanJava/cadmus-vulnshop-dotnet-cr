@@ -27,16 +27,6 @@ public static class A06_InsecureDesign
     {
         var g = app.MapGroup("/api/a06").WithTags("A06 Insecure Design");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A06 : CWE-602 : the client is trusted to compute price.
-        //     The request carries unitPrice. The server multiplies and stores.
-        //     Nothing is injected, nothing is unescaped - the trust boundary
-        //     was simply drawn in the wrong place at design time.
-        //
-        //     Ask the room: at which point in the design conversation could
-        //     this have been caught? Answer: the first data-flow diagram, when
-        //     someone asks "who is authoritative for price?"
-        // ------------------------------------------------------------------
         g.MapPost("/checkout", (CheckoutRequest req, HttpContext ctx) =>
         {
             var total = req.Quantity * req.UnitPrice;
@@ -58,15 +48,6 @@ public static class A06_InsecureDesign
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A06 : CWE-841 : missing business-logic limit. The coupon has
-        //     a redemption counter, and the code faithfully increments it -
-        //     but no rule anywhere says what the counter is *for*. Redeem
-        //     STAFF50 a thousand times and the discount stacks a thousand times.
-        //
-        //     There is also a TOCTOU race: read, then write, with no
-        //     transaction and no row lock, so concurrent requests all pass.
-        // ------------------------------------------------------------------
         g.MapPost("/redeem", (string code) =>
         {
             using var cn = AppDatabase.Open();
@@ -90,14 +71,6 @@ public static class A06_InsecureDesign
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A06 : CWE-307 : no rate limiting anywhere on the design.
-        //     This endpoint tells a caller whether an email is registered, and
-        //     will answer as fast and as often as it is asked. That is a user
-        //     enumeration oracle and a credential-stuffing accelerator - and
-        //     it was never a *bug*, it was a product decision to give
-        //     "helpful" feedback.
-        // ------------------------------------------------------------------
         g.MapGet("/account-exists", (string email) =>
         {
             using var cn = AppDatabase.Open();
@@ -109,12 +82,6 @@ public static class A06_InsecureDesign
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A06 : CWE-640 : password recovery through a "security
-        //     question" whose answer is public information. Implemented
-        //     perfectly. Designed to authenticate a stranger using facts a
-        //     stranger can look up.
-        // ------------------------------------------------------------------
         g.MapPost("/recover", (RecoveryRequest req) =>
         {
             if (!string.Equals(req.MothersMaidenName, "Kovac", StringComparison.OrdinalIgnoreCase))

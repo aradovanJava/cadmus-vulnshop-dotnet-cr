@@ -20,14 +20,6 @@ public static class A01_BrokenAccessControl
     {
         var g = app.MapGroup("/api/a01").WithTags("A01 Broken Access Control");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A01 : CWE-639 : Insecure Direct Object Reference.
-        //     The handler trusts the {id} in the URL and never asks whether the
-        //     caller owns that invoice. Any authenticated user enumerates every
-        //     invoice in the system by incrementing an integer.
-        //
-        //     Demonstrate: log in as 'trainee' (owns invoice 3), request 1.
-        // ------------------------------------------------------------------
         g.MapGet("/invoices/{id:int}", (int id, HttpContext ctx) =>
         {
             using var cn = AppDatabase.Open();
@@ -49,11 +41,6 @@ public static class A01_BrokenAccessControl
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A01 : CWE-602 : client-side enforcement of a server-side
-        //     decision. The admin check is done in JavaScript in the SPA; the
-        //     API itself simply believes an "X-Role" request header.
-        // ------------------------------------------------------------------
         g.MapGet("/admin/users", (HttpContext ctx) =>
         {
             var role = ctx.Request.Headers["X-Role"].ToString();
@@ -79,12 +66,6 @@ public static class A01_BrokenAccessControl
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A01 : CWE-352 : state-changing operation over GET, with no
-        //     anti-forgery token. A single <img src="..."> on any page the
-        //     victim visits escalates that attacker's account to admin,
-        //     because the session cookie rides along (SameSite=None above).
-        // ------------------------------------------------------------------
         g.MapGet("/promote", (string username, HttpContext ctx) =>
         {
             using var cn = AppDatabase.Open();
@@ -96,14 +77,6 @@ public static class A01_BrokenAccessControl
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A01 : CWE-918 : Server-Side Request Forgery.
-        //     The server fetches an arbitrary caller-supplied URL and returns
-        //     the body. Because the request originates inside the range
-        //     network, it reaches hosts, loopback services and cloud metadata
-        //     endpoints the caller cannot reach directly. SSRF sits in A01 in
-        //     the 2025 list precisely because this is an access-control break.
-        // ------------------------------------------------------------------
         g.MapGet("/avatar-proxy", async (string url, IHttpClientFactory factory) =>
         {
             var http = factory.CreateClient();

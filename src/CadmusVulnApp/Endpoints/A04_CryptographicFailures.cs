@@ -17,29 +17,15 @@ namespace CadmusVulnApp.Endpoints;
 /// </summary>
 public static class A04_CryptographicFailures
 {
-    // >>> VULN A04 : CWE-798 : hard-coded symmetric key committed to source
-    //                control. Rotating it now requires a code change, a build
-    //                and a deploy - which is why it will never be rotated.
     private static readonly byte[] Key =
         Encoding.UTF8.GetBytes("CadmusRange2026SecretKey_32Bytes");
 
-    // >>> VULN A04 : CWE-329 : a fixed, non-random IV. Under CBC this makes
-    //                the ciphertext deterministic: identical plaintexts encrypt
-    //                to identical bytes, so an observer learns equality without
-    //                learning the key.
     private static readonly byte[] StaticIv = new byte[16];
 
     public static void Map(WebApplication app)
     {
         var g = app.MapGroup("/api/a04").WithTags("A04 Cryptographic Failures");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A04 : CWE-327 : broken primitive plus broken mode. ECB
-        //     encrypts each 16-byte block independently, so structure in the
-        //     plaintext survives into the ciphertext, and there is no
-        //     authentication tag at all - ciphertext can be tampered with
-        //     undetected.
-        // ------------------------------------------------------------------
         g.MapPost("/protect", (PlainText body) =>
         {
             using var aes = Aes.Create();
@@ -55,13 +41,6 @@ public static class A04_CryptographicFailures
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A04 : CWE-338 : System.Random is a linear congruential
-        //     generator seeded from the clock. Given two or three tokens an
-        //     attacker recovers the seed and predicts every token that will
-        //     ever be issued. This same generator backs the A07 password-reset
-        //     token, which is where it becomes a full account takeover.
-        // ------------------------------------------------------------------
         g.MapGet("/session-token", () =>
         {
             var rng = new Random();
@@ -71,11 +50,6 @@ public static class A04_CryptographicFailures
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A04 : CWE-759 / CWE-916 : unsalted MD5 verification, and a
-        //     non-constant-time string comparison that leaks the position of
-        //     the first differing character through response timing.
-        // ------------------------------------------------------------------
         g.MapPost("/verify-password", (Credentials c) =>
         {
             using var cn = AppDatabase.Open();
@@ -90,11 +64,6 @@ public static class A04_CryptographicFailures
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A04 : CWE-295 : certificate validation disabled outright.
-        //     Every outbound TLS connection this handler makes is trivially
-        //     interceptable; the padlock is decorative.
-        // ------------------------------------------------------------------
         g.MapGet("/partner-balance", async () =>
         {
             var handler = new HttpClientHandler

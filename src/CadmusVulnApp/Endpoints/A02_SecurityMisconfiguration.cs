@@ -17,11 +17,6 @@ public static class A02_SecurityMisconfiguration
     {
         var g = app.MapGroup("/api/a02").WithTags("A02 Security Misconfiguration");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A02 : CWE-215 : a diagnostics endpoint left enabled in
-        //     production, dumping the entire configuration graph - connection
-        //     strings, signing keys, environment variables and all.
-        // ------------------------------------------------------------------
         g.MapGet("/debug/config", (IConfiguration config) =>
         {
             var dump = config.AsEnumerable()
@@ -31,11 +26,6 @@ public static class A02_SecurityMisconfiguration
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A02 : CWE-756 : verbose version banner. Framework and
-        //     package versions let an attacker map straight to known CVEs
-        //     without probing - which pairs with the outdated packages in A03.
-        // ------------------------------------------------------------------
         g.MapGet("/version", () => Results.Ok(new
         {
             Runtime = Environment.Version.ToString(),
@@ -47,11 +37,6 @@ public static class A02_SecurityMisconfiguration
         }));
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A02 : CWE-16 : HTTP methods that were never intended to be
-        //     routable are wired up anyway. TRACE-style echo endpoints reflect
-        //     request headers, including Cookie and Authorization.
-        // ------------------------------------------------------------------
         g.MapMethods("/echo", new[] { "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS" },
             (HttpContext ctx) => Results.Ok(new
             {

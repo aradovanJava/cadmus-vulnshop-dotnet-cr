@@ -21,14 +21,6 @@ public static class A05_Injection
     {
         var g = app.MapGroup("/api/a05").WithTags("A05 Injection");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A05 : CWE-89 : SQL injection by string concatenation.
-        //     The classic. SonarQube rule S3649 and Snyk Code both flag this
-        //     on a taint path from the query string to ExecuteReader.
-        //
-        //     Demonstrate in CR1 with sqlmap (already on VM1):
-        //       sqlmap -u "http://localhost:5080/api/a05/search?customer=x" --batch
-        // ------------------------------------------------------------------
         g.MapGet("/search", (string customer) =>
         {
             using var cn = AppDatabase.Open();
@@ -47,12 +39,6 @@ public static class A05_Injection
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A05 : CWE-79 : reflected cross-site scripting. User input is
-        //     interpolated into an HTML response with no contextual encoding,
-        //     and the response is served as text/html. No CSP is set (see A02),
-        //     so nothing contains it.
-        // ------------------------------------------------------------------
         g.MapGet("/greet", (string name) =>
         {
             var html = $"""
@@ -66,10 +52,6 @@ public static class A05_Injection
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A05 : CWE-78 : OS command injection. Caller-controlled text
-        //     lands in a shell argument string, so ; && | and $() all work.
-        // ------------------------------------------------------------------
         g.MapGet("/ping", (string host) =>
         {
             var psi = new ProcessStartInfo
@@ -87,10 +69,6 @@ public static class A05_Injection
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A05 : CWE-22 : path traversal. The caller's string is joined
-        //     onto a base directory, and ../ walks straight out of it.
-        // ------------------------------------------------------------------
         g.MapGet("/report", (string file) =>
         {
             var baseDir = Path.Combine(AppContext.BaseDirectory, "reports");

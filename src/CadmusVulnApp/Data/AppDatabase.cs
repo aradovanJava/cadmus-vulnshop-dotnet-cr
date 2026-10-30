@@ -16,10 +16,6 @@ public static class AppDatabase
 
     public static void Initialise(IConfiguration config)
     {
-        // >>> VULN A04 : CWE-798 : the connection string, including credentials
-        //                for the non-SQLite providers, is read from a file that
-        //                is committed to source control (appsettings.json).
-        //
         ConnectionString = config.GetConnectionString("Default")
                            ?? "Data Source=cadmus-range.db";
 
@@ -71,9 +67,6 @@ public static class AppDatabase
         check.CommandText = "SELECT COUNT(*) FROM Users";
         if (Convert.ToInt32(check.ExecuteScalar()) > 0) return;
 
-        // >>> VULN A02 : CWE-1392 : a default administrator account with a
-        //                well-known password is seeded and never forced to
-        //                rotate on first login.
         Seed(cn, "admin",  "admin123",   "Administrator", "admin@cadmus.local",  "HR1723600000000000000");
         Seed(cn, "aradovan", "Password1", "Auditor",       "a.radovan@cadmus.local", "HR1723600000011111111");
         Seed(cn, "trainee", "trainee",    "User",          "trainee@cadmus.local", "HR1723600000022222222");
@@ -108,11 +101,6 @@ public static class AppDatabase
         cmd.ExecuteNonQuery();
     }
 
-    /// <summary>
-    /// >>> VULN A04 : CWE-916 : unsalted MD5 as a password hash. Fast, broken
-    ///                collision-wise, and trivially reversed with a rainbow
-    ///                table. Identical passwords produce identical hashes.
-    /// </summary>
     public static string LegacyHash(string input)
     {
         var bytes = MD5.HashData(Encoding.UTF8.GetBytes(input));

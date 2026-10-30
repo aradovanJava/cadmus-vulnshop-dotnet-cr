@@ -21,12 +21,6 @@ public static class A09_LoggingAndAlerting
     {
         var g = app.MapGroup("/api/a09").WithTags("A09 Logging & Alerting");
 
-        // ------------------------------------------------------------------
-        // >>> VULN A09 : CWE-778 : a security-relevant event - a failed
-        //     privileged action - produces no log record at all. There is
-        //     nothing to alert on, nothing to correlate, and nothing to hand
-        //     an incident responder afterwards.
-        // ------------------------------------------------------------------
         g.MapPost("/admin/delete-user", (int id, HttpContext ctx) =>
         {
             var role = ctx.Session.GetString("role");
@@ -43,12 +37,6 @@ public static class A09_LoggingAndAlerting
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A09 : CWE-532 : the opposite failure - logging that captures
-        //     exactly what must never be written down. The password, the token
-        //     and the IBAN all land in plaintext in a log that is retained for
-        //     a year and read by people with no need to see any of it.
-        // ------------------------------------------------------------------
         g.MapPost("/audit", (AuditEvent e, ILogger<Program> logger) =>
         {
             logger.LogError(
@@ -59,13 +47,6 @@ public static class A09_LoggingAndAlerting
         });
 
 
-        // ------------------------------------------------------------------
-        // >>> VULN A09 : CWE-117 : log injection. Unsanitised input containing
-        //     CR/LF is written straight into a line-oriented log, so an
-        //     attacker forges whole log entries and can bury the real ones.
-        //
-        //     Try: note=ok%0d%0aAUDIT%20user%3Dadmin%20outcome%3Dsuccess
-        // ------------------------------------------------------------------
         g.MapGet("/note", (string note, ILogger<Program> logger) =>
         {
             logger.LogError("User note: " + note);   // string concatenation, not a template

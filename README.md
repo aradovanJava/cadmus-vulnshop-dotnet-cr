@@ -10,9 +10,10 @@ The Cyber Range training target for **CADMUS-CR-13 — Secure Coding .NET/C#**
 > injection. It exists to be scanned, discussed and repaired inside the
 > CADMUS Cyber Range sandbox. **Read [SAFETY.md](SAFETY.md) before you start it.**
 
-This is the **participant build**: the remediation guidance that accompanies
-each defect in the instructor copy has been removed, and so has the reference
-CI/CD pipeline. Working those out is the exercise.
+This is the **participant build**: the defect markers and the remediation
+guidance that accompany each defect in the instructor copy have been removed,
+and so has the reference CI/CD pipeline. Finding, classifying and fixing the
+defects without them is the exercise.
 
 ---
 

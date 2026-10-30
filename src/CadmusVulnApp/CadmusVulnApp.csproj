@@ -7,42 +7,16 @@
     <RootNamespace>CadmusVulnApp</RootNamespace>
     <AssemblyName>CadmusVulnApp</AssemblyName>
     <UserSecretsId>cadmus-cr-13-vulnerable-app</UserSecretsId>
-
-    <!-- ==========================================================
-         VULN A03 - Software Supply Chain Failures
-         ----------------------------------------------------------
-         Build-integrity controls are deliberately switched OFF.
-         Trainees re-enable these in the CR3 remediation lab.
-         ========================================================== -->
-    <!-- No NuGet audit: known-vulnerable dependencies never surface at build time -->
     <NuGetAudit>false</NuGetAudit>
-    <!-- No lock file: the restored dependency graph is not reproducible -->
     <RestorePackagesWithLockFile>false</RestorePackagesWithLockFile>
-    <!-- Warnings that would flag deprecated/vulnerable packages are suppressed -->
     <NoWarn>$(NoWarn);NU1901;NU1902;NU1903;NU1904;SYSLIB0011;CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- ==========================================================
-         VULN A03 - deliberately outdated / advisory-bearing packages.
-         Snyk / dotnet list package --vulnerable / Dependabot should all
-         light up on these. DO NOT UPDATE - that is the CR3 exercise.
-         ========================================================== -->
-
-    <!-- Newtonsoft.Json 9.0.1 (2016). Predates the deserialisation
-         hardening added in 13.0.1; also used by the A08 gadget demo. -->
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-
-    <!-- System.Text.Encodings.Web 4.5.0 - CVE-2021-26701 (RCE) -->
     <PackageReference Include="System.Text.Encodings.Web" Version="4.5.0" />
-
-    <!-- System.Net.Http 4.3.0 - CVE-2018-8292 (information disclosure) -->
     <PackageReference Include="System.Net.Http" Version="4.3.0" />
-
-    <!-- SixLabors.ImageSharp 1.0.2 - multiple DoS advisories -->
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.2" />
-
-    <!-- Current packages (not part of the vulnerable set) -->
     <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
